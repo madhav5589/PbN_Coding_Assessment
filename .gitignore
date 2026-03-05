@@ -1,0 +1,46 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+.next/
+out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.*
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# VSCode
+.vscode/
+
+# Coverage
+coverage/
+
+# Misc
+*.local
+*.log
+*.sqlite
+*.sqlite-journal
+
+# Docker
+*.pid
+
+# Ignore Mac system files
+Icon?
+
+# Ignore infrastructure generated files
+infrastructure/*.log

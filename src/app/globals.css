@@ -1,0 +1,204 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Apple Mirror Design System Tokens ─────────────────── */
+
+:root {
+  --color-bg-primary: 255, 255, 255;
+  --color-bg-secondary: 245, 245, 247;
+  --color-bg-tertiary: 238, 238, 240;
+  --color-surface: 255, 255, 255;
+  --color-surface-elevated: 255, 255, 255;
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-heavy: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-blur: 20px;
+  --glass-blur-heavy: 40px;
+
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #6e6e73;
+  --color-text-tertiary: #86868b;
+  --color-text-quaternary: #aeaeb2;
+  --color-text-inverse: #ffffff;
+
+  --color-accent: #7c3aed;
+  --color-accent-hover: #6d28d9;
+  --color-accent-light: #ede9fe;
+  --color-accent-subtle: rgba(124, 58, 237, 0.08);
+  --color-accent-text: #7c3aed;
+
+  --color-success: #34c759;
+  --color-success-bg: rgba(52, 199, 89, 0.1);
+  --color-success-text: #248a3d;
+  --color-warning: #ff9f0a;
+  --color-warning-bg: rgba(255, 159, 10, 0.1);
+  --color-warning-text: #c77c02;
+  --color-error: #ff3b30;
+  --color-error-bg: rgba(255, 59, 48, 0.1);
+  --color-error-text: #d70015;
+  --color-info: #007aff;
+  --color-info-bg: rgba(0, 122, 255, 0.1);
+  --color-info-text: #0066d6;
+
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.15);
+  --color-border-focus: rgba(124, 58, 237, 0.5);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.16), 0 8px 24px rgba(0, 0, 0, 0.06);
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --overlay-bg: rgba(0, 0, 0, 0.4);
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', Menlo, monospace;
+}
+
+[data-theme="dark"] {
+  --color-bg-primary: 0, 0, 0;
+  --color-bg-secondary: 28, 28, 30;
+  --color-bg-tertiary: 44, 44, 46;
+  --color-surface: 28, 28, 30;
+  --color-surface-elevated: 44, 44, 46;
+
+  --glass-bg: rgba(28, 28, 30, 0.72);
+  --glass-bg-heavy: rgba(28, 28, 30, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #a1a1a6;
+  --color-text-tertiary: #6e6e73;
+  --color-text-quaternary: #48484a;
+  --color-text-inverse: #1d1d1f;
+
+  --color-accent: #a78bfa;
+  --color-accent-hover: #8b5cf6;
+  --color-accent-light: rgba(167, 139, 250, 0.15);
+  --color-accent-subtle: rgba(167, 139, 250, 0.08);
+  --color-accent-text: #a78bfa;
+
+  --color-success-bg: rgba(52, 199, 89, 0.15);
+  --color-success-text: #30d158;
+  --color-warning-bg: rgba(255, 159, 10, 0.15);
+  --color-warning-text: #ffd60a;
+  --color-error-bg: rgba(255, 59, 48, 0.15);
+  --color-error-text: #ff453a;
+  --color-info-bg: rgba(0, 122, 255, 0.15);
+  --color-info-text: #64d2ff;
+
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-border-focus: rgba(167, 139, 250, 0.5);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.3);
+
+  --overlay-bg: rgba(0, 0, 0, 0.6);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background: rgb(var(--color-bg-secondary));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-text-quaternary); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-tertiary); }
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+
+.glass-panel-heavy {
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--glass-blur-heavy));
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy));
+  border: 1px solid var(--glass-border);
+}
+
+.surface {
+  background: rgb(var(--color-surface));
+  border: 1px solid var(--color-border);
+}
+
+.surface-elevated {
+  background: rgb(var(--color-surface-elevated));
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, rgb(var(--color-bg-tertiary)) 25%, rgb(var(--color-bg-secondary)) 50%, rgb(var(--color-bg-tertiary)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+::selection {
+  background: var(--color-accent-light);
+  color: var(--color-accent-text);
+}

@@ -1,0 +1,49 @@
+{
+  "name": "stylehub-booking",
+  "version": "1.0.0",
+  "description": "StyleHub Hair Salon - Appointment Booking Platform",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma migrate reset --force",
+    "db:studio": "prisma studio",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "@types/react": "^19.2.14",
+    "autoprefixer": "^10.4.27",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^12.35.0",
+    "ioredis": "^5.10.0",
+    "lucide-react": "^0.577.0",
+    "next": "^14.2.35",
+    "postcss": "^8.5.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "uuid": "^13.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "@types/uuid": "^10.0.0",
+    "eslint": "^9.39.3",
+    "eslint-config-next": "^16.1.6",
+    "prisma": "^6.19.2",
+    "ts-node": "^10.9.2"
+  }
+}

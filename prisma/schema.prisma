@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id              String       @id @default(uuid())
+  name            String
+  timezone        String       @default("America/Chicago")
+  slotIntervalMin Int          @default(15)
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  services     Service[]
+  staff        Staff[]
+  blackouts    Blackout[]
+  appointments Appointment[]
+
+  @@map("businesses")
+}
+
+model Service {
+  id              String  @id @default(uuid())
+  businessId      String  @map("business_id")
+  name            String
+  durationMin     Int     @map("duration_min")
+  bufferBeforeMin Int     @default(0) @map("buffer_before_min")
+  bufferAfterMin  Int     @default(0) @map("buffer_after_min")
+  priceCents      Int     @map("price_cents")
+  isActive        Boolean @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  business     Business       @relation(fields: [businessId], references: [id])
+  staffServices StaffService[]
+  appointments Appointment[]
+
+  @@map("services")
+}
+
+model Staff {
+  id         String  @id @default(uuid())
+  businessId String  @map("business_id")
+  name       String
+  isActive   Boolean @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  business      Business       @relation(fields: [businessId], references: [id])
+  staffServices StaffService[]
+  workingHours  WorkingHours[]
+  timeOffs      TimeOff[]
+  appointments  Appointment[]
+
+  @@map("staff")
+}
+
+model StaffService {
+  id               String @id @default(uuid())
+  staffId          String @map("staff_id")
+  serviceId        String @map("service_id")
+  proficiencyLevel Int    @default(1) @map("proficiency_level")
+
+  staff   Staff   @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, serviceId])
+  @@map("staff_services")
+}
+
+model WorkingHours {
+  id             String  @id @default(uuid())
+  staffId        String  @map("staff_id")
+  dayOfWeek      Int     @map("day_of_week") // 0=Sunday, 1=Monday, ..., 6=Saturday
+  startTimeLocal String  @map("start_time_local") // "09:00"
+  endTimeLocal   String  @map("end_time_local")   // "17:00"
+  isClosed       Boolean @default(false) @map("is_closed")
+
+  staff Staff @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@unique([staffId, dayOfWeek])
+  @@map("working_hours")
+}
+
+model TimeOff {
+  id        String   @id @default(uuid())
+  staffId   String   @map("staff_id")
+  startAt   DateTime @map("start_at") // stored as UTC
+  endAt     DateTime @map("end_at")   // stored as UTC
+  reason    String   @default("")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  staff Staff @relation(fields: [staffId], references: [id], onDelete: Cascade)
+
+  @@map("time_offs")
+}
+
+model Blackout {
+  id         String   @id @default(uuid())
+  businessId String   @map("business_id")
+  startAt    DateTime @map("start_at") // stored as UTC
+  endAt      DateTime @map("end_at")   // stored as UTC
+  reason     String   @default("")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@map("blackouts")
+}
+
+enum AppointmentStatus {
+  BOOKED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+
+  @@map("appointment_status")
+}
+
+model Appointment {
+  id             String            @id @default(uuid())
+  businessId     String            @map("business_id")
+  serviceId      String            @map("service_id")
+  staffId        String            @map("staff_id")
+  customerName   String            @map("customer_name")
+  customerEmail  String            @map("customer_email")
+  customerPhone  String            @default("") @map("customer_phone")
+  startAt        DateTime          @map("start_at") // stored as UTC
+  endAt          DateTime          @map("end_at")   // stored as UTC
+  status         AppointmentStatus @default(BOOKED)
+  notes          String            @default("")
+  idempotencyKey String?           @unique @map("idempotency_key")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+  service  Service  @relation(fields: [serviceId], references: [id])
+  staff    Staff    @relation(fields: [staffId], references: [id])
+
+  @@index([staffId, startAt, endAt])
+  @@index([businessId, startAt])
+  @@index([status])
+  @@map("appointments")
+}
+
+model EventLog {
+  id        String   @id @default(uuid())
+  type      String
+  payload   Json     @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([type])
+  @@index([createdAt])
+  @@map("event_logs")
+}
+
+model NotificationJob {
+  id        String   @id @default(uuid())
+  type      String
+  payload   Json     @default("{}")
+  status    String   @default("pending") // pending, processing, completed, failed
+  attempts  Int      @default(0)
+  nextRunAt DateTime @map("next_run_at") @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status, nextRunAt])
+  @@map("notification_jobs")
+}

@@ -15,11 +15,14 @@ docker compose -f infrastructure/docker-compose.yml up -d
 # 2. Install dependencies
 npm install
 
-# 3. Run migrations and seed
+# 3. Create your .env file from the sample
+cp .env.sample .env
+
+# 4. Run migrations and seed
 npx prisma migrate dev
 npx prisma db seed
 
-# 4. Start the app
+# 5. Start the app
 npm run dev
 ```
 

@@ -47,6 +47,8 @@ const stepLabels: Record<Step, { num: number; label: string }> = {
 
 const steps: Step[] = ["date", "slot", "info", "confirm"];
 
+const BUSINESS_TIMEZONE = "America/Chicago";
+
 export default function BookServicePage() {
   const params = useParams();
   const router = useRouter();
@@ -501,10 +503,15 @@ export default function BookServicePage() {
                 {[
                   ["Service", booking.appointment.service.name],
                   ["Stylist", booking.appointment.staff.name],
-                  ["Date", new Date(booking.appointment.startAt).toLocaleDateString()],
+                  [
+                    "Date",
+                    new Date(booking.appointment.startAt).toLocaleDateString("en-US", {
+                      timeZone: BUSINESS_TIMEZONE,
+                    }),
+                  ],
                   [
                     "Time",
-                    `${new Date(booking.appointment.startAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} – ${new Date(booking.appointment.endAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                    `${new Date(booking.appointment.startAt).toLocaleTimeString("en-US", { timeZone: BUSINESS_TIMEZONE, hour: "2-digit", minute: "2-digit" })} – ${new Date(booking.appointment.endAt).toLocaleTimeString("en-US", { timeZone: BUSINESS_TIMEZONE, hour: "2-digit", minute: "2-digit" })}`,
                   ],
                   ["Confirmation", booking.appointment.id.slice(0, 8).toUpperCase()],
                 ].map(([label, value]) => (

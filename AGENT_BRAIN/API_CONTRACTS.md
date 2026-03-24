@@ -3,6 +3,18 @@
 ## Base URL
 `http://localhost:3000/api`
 
+## Tenant Header
+All routes (except `/api/health`) require the `x-business-id` HTTP header containing a valid business UUID. The `bizFetch` client wrapper injects this automatically from `NEXT_PUBLIC_BUSINESS_ID`.
+
+Missing or invalid header → `400 { error: "TENANT_REQUIRED", message: "..." }`
+
+## Tenant Check
+
+### GET /api/tenant/check
+Verify that the current `x-business-id` resolves to a known business. Used by `TenantGuard` on mount.
+- **200** `{ ok: true }` — business found
+- **400** `{ error: "TENANT_REQUIRED" }` — business not found
+
 ## Common Types (Zod)
 
 ```typescript

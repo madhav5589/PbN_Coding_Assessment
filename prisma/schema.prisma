@@ -69,6 +69,9 @@ model StaffService {
   service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   @@unique([staffId, serviceId])
+  // Availability engine queries staff by serviceId; without this index that
+  // query scans the entire staff_services table for every availability request.
+  @@index([serviceId])
   @@map("staff_services")
 }
 
@@ -96,6 +99,9 @@ model TimeOff {
 
   staff Staff @relation(fields: [staffId], references: [id], onDelete: Cascade)
 
+  // Availability engine queries time-offs by staffId + date range.
+  // Without this index, each per-staff loop iteration does a full table scan.
+  @@index([staffId, startAt, endAt])
   @@map("time_offs")
 }
 
@@ -109,6 +115,9 @@ model Blackout {
 
   business Business @relation(fields: [businessId], references: [id])
 
+  // Availability engine and booking endpoint query blackouts by businessId +
+  // date range on every request. Without this index the query scans all rows.
+  @@index([businessId, startAt, endAt])
   @@map("blackouts")
 }
 

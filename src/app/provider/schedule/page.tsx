@@ -6,6 +6,8 @@ import {
   Button, Card, Input, Select, Modal, Badge, Switch, PageHeader,
   EmptyState, FadeIn, StaggerContainer, StaggerItem, useToast
 } from "@/components/ui";
+import { bizFetch } from "@/lib/client-fetch";
+import { formatDateTZ, formatTimeTZ } from "@/lib/format-date";
 
 interface StaffMember {
   id: string;
@@ -53,14 +55,14 @@ export default function ProviderSchedulePage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetch("/api/provider/staff")
+    bizFetch("/api/provider/staff")
       .then((r) => r.json())
       .then((d) => {
         setStaff(d.staff);
         if (d.staff.length > 0) setSelectedStaff(d.staff[0].id);
         setLoading(false);
       });
-    fetch("/api/provider/blackouts")
+    bizFetch("/api/provider/blackouts")
       .then((r) => r.json())
       .then((d) => setBlackouts(d.blackouts));
   }, []);
@@ -68,8 +70,8 @@ export default function ProviderSchedulePage() {
   useEffect(() => {
     if (!selectedStaff) return;
     Promise.all([
-      fetch(`/api/provider/staff/${selectedStaff}/hours`).then((r) => r.json()),
-      fetch(`/api/provider/staff/${selectedStaff}/time-off`).then((r) => r.json()),
+      bizFetch(`/api/provider/staff/${selectedStaff}/hours`).then((r) => r.json()),
+      bizFetch(`/api/provider/staff/${selectedStaff}/time-off`).then((r) => r.json()),
     ]).then(([hData, toData]) => {
       setHours(hData.hours);
       setTimeOffs(toData.timeOffs);
@@ -91,12 +93,12 @@ export default function ProviderSchedulePage() {
   }
 
   async function saveHours() {
-    await fetch(`/api/provider/staff/${selectedStaff}/hours`, {
+    await bizFetch(`/api/provider/staff/${selectedStaff}/hours`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ hours: hoursForm }),
     });
-    const res = await fetch(`/api/provider/staff/${selectedStaff}/hours`);
+    const res = await bizFetch(`/api/provider/staff/${selectedStaff}/hours`);
     const data = await res.json();
     setHours(data.hours);
     setEditingHours(false);
@@ -105,7 +107,7 @@ export default function ProviderSchedulePage() {
 
   async function addTimeOff(e: React.FormEvent) {
     e.preventDefault();
-    await fetch(`/api/provider/staff/${selectedStaff}/time-off`, {
+    await bizFetch(`/api/provider/staff/${selectedStaff}/time-off`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -116,21 +118,21 @@ export default function ProviderSchedulePage() {
     });
     setShowTimeOffForm(false);
     setToForm({ startAt: "", endAt: "", reason: "" });
-    const res = await fetch(`/api/provider/staff/${selectedStaff}/time-off`);
+    const res = await bizFetch(`/api/provider/staff/${selectedStaff}/time-off`);
     const data = await res.json();
     setTimeOffs(data.timeOffs);
     toast({ type: "success", title: "Time off added" });
   }
 
   async function deleteTimeOff(id: string) {
-    await fetch(`/api/provider/time-off/${id}`, { method: "DELETE" });
+    await bizFetch(`/api/provider/time-off/${id}`, { method: "DELETE" });
     setTimeOffs(timeOffs.filter((t) => t.id !== id));
     toast({ type: "info", title: "Time off removed" });
   }
 
   async function addBlackout(e: React.FormEvent) {
     e.preventDefault();
-    await fetch("/api/provider/blackouts", {
+    await bizFetch("/api/provider/blackouts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -141,14 +143,14 @@ export default function ProviderSchedulePage() {
     });
     setShowBlackoutForm(false);
     setBoForm({ startAt: "", endAt: "", reason: "" });
-    const res = await fetch("/api/provider/blackouts");
+    const res = await bizFetch("/api/provider/blackouts");
     const data = await res.json();
     setBlackouts(data.blackouts);
     toast({ type: "success", title: "Blackout date added" });
   }
 
   async function deleteBlackout(id: string) {
-    await fetch(`/api/provider/blackouts/${id}`, { method: "DELETE" });
+    await bizFetch(`/api/provider/blackouts/${id}`, { method: "DELETE" });
     setBlackouts(blackouts.filter((b) => b.id !== id));
     toast({ type: "info", title: "Blackout date removed" });
   }
@@ -318,11 +320,11 @@ export default function ProviderSchedulePage() {
                   <div key={to.id} className="flex items-center justify-between py-2 border-b border-[var(--glass-border)] last:border-0">
                     <div className="text-sm">
                       <span className="font-medium text-[var(--color-text-primary)]">
-                        {new Date(to.startAt).toLocaleDateString()} {new Date(to.startAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {formatDateTZ(to.startAt)} {formatTimeTZ(to.startAt)}
                       </span>
                       <span className="text-[var(--color-text-quaternary)] mx-2">→</span>
                       <span className="font-medium text-[var(--color-text-primary)]">
-                        {new Date(to.endAt).toLocaleDateString()} {new Date(to.endAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        {formatDateTZ(to.endAt)} {formatTimeTZ(to.endAt)}
                       </span>
                       {to.reason && <span className="text-[var(--color-text-tertiary)] ml-2">({to.reason})</span>}
                     </div>
@@ -391,7 +393,7 @@ export default function ProviderSchedulePage() {
                   <div key={b.id} className="flex items-center justify-between py-2 border-b border-[var(--glass-border)] last:border-0">
                     <div className="text-sm">
                       <span className="font-medium text-[var(--color-text-primary)]">
-                        {new Date(b.startAt).toLocaleDateString()} → {new Date(b.endAt).toLocaleDateString()}
+                        {formatDateTZ(b.startAt)} → {formatDateTZ(b.endAt)}
                       </span>
                       {b.reason && <span className="text-[var(--color-text-tertiary)] ml-2">({b.reason})</span>}
                     </div>

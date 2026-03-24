@@ -5,6 +5,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Button, Card, Badge, Avatar, Tabs, PageHeader, GlassPanel, FadeIn
 } from "@/components/ui";
+import { bizFetch } from "@/lib/client-fetch";
+import { localHourMinute } from "@/lib/format-date";
 
 interface Appointment {
   id: string;
@@ -37,14 +39,14 @@ export default function ProviderCalendarPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/provider/staff").then((r) => r.json()).then((d) => setStaff(d.staff));
+    bizFetch("/api/provider/staff").then((r) => r.json()).then((d) => setStaff(d.staff));
   }, []);
 
   useEffect(() => {
     async function loadWeek() {
       setLoading(true);
       if (view === "day") {
-        const res = await fetch(`/api/provider/appointments?date=${date}`);
+        const res = await bizFetch(`/api/provider/appointments?date=${date}`);
         const data = await res.json();
         setAppointments(data.appointments);
       } else {
@@ -57,7 +59,7 @@ export default function ProviderCalendarPage() {
           const d = new Date(monday);
           d.setDate(d.getDate() + i);
           const ds = d.toISOString().slice(0, 10);
-          const res = await fetch(`/api/provider/appointments?date=${ds}`);
+          const res = await bizFetch(`/api/provider/appointments?date=${ds}`);
           const data = await res.json();
           allAppts.push(...data.appointments);
         }
@@ -103,7 +105,8 @@ export default function ProviderCalendarPage() {
           {dayAppts.map((a) => {
             const start = new Date(a.startAt);
             const end = new Date(a.endAt);
-            const topMinutes = start.getHours() * 60 + start.getMinutes() - 8 * 60;
+            const { hour: startHour, minute: startMin } = localHourMinute(start);
+            const topMinutes = startHour * 60 + startMin - 8 * 60;
             const heightMinutes = (end.getTime() - start.getTime()) / 60000;
             const topPx = (topMinutes / 60) * 80;
             const heightPx = (heightMinutes / 60) * 80;
@@ -184,7 +187,8 @@ export default function ProviderCalendarPage() {
                   {dayAppts.map((a) => {
                     const s = new Date(a.startAt);
                     const e = new Date(a.endAt);
-                    const topMinutes = s.getHours() * 60 + s.getMinutes() - 8 * 60;
+                    const { hour: sHour, minute: sMin } = localHourMinute(s);
+                    const topMinutes = sHour * 60 + sMin - 8 * 60;
                     const heightMinutes = (e.getTime() - s.getTime()) / 60000;
                     const topPx = (topMinutes / 60) * 60;
                     const heightPx = (heightMinutes / 60) * 60;

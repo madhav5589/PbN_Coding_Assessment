@@ -70,3 +70,19 @@
 | UI-11 | Provider appointments page (table, detail modal) | DONE |
 | UI-12 | Provider calendar page (day/week views, staff colors) | DONE |
 | UI-13 | TypeScript compilation verification | DONE |
+
+## PHASE 7 — Multi-tenant Hardening, Timezone Fix, Error UX
+
+| ID | Task | Status |
+|----|------|--------|
+| MT-01 | Propagate tenant scoping to all API routes (resolveTenant + businessId filters) | DONE |
+| MT-02 | Create bizFetch client wrapper + NEXT_PUBLIC_BUSINESS_ID env var | DONE |
+| MT-03 | Update all client pages to use bizFetch (eliminate missing x-business-id crashes) | DONE |
+| MT-04 | Fix analytics route: replace $queryRaw AT TIME ZONE with JS-based grouping | DONE |
+| MT-05 | Fix timezone display: add NEXT_PUBLIC_BUSINESS_TIMEZONE + format-date.ts helpers | DONE |
+| MT-06 | Fix calendar grid positioning: use localHourMinute() instead of .getHours() | DONE |
+| MT-07 | Add TenantGuard component + /api/tenant/check endpoint for friendly error screen | DONE |
+| MT-08 | Write 19 unit tests for availability engine (double-booking, TZ edges, multi-tenant) | DONE |
+| MT-09 | Fix TOCTOU race in cancel route (atomic updateMany) | DONE |
+| MT-10 | Fix reschedule route: timezone-correct day boundaries, working-hours/time-off checks | DONE |
+| MT-11 | Update README + AGENT_BRAIN to reflect all Phase 7 changes | DONE |

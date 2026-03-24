@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Scissors, LayoutDashboard, Wrench, Users, CalendarClock, CalendarDays, Clock } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TenantGuard } from "@/components/tenant-guard";
 
 const navItems = [
   { href: "/provider", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -93,7 +94,7 @@ export default function ProviderLayout({
       </header>
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
-        {children}
+        <TenantGuard>{children}</TenantGuard>
       </main>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   Button, Card, Input, Modal, Badge, Avatar, PageHeader, Checkbox,
   SkeletonCard, EmptyState, FadeIn, StaggerContainer, StaggerItem, useToast
 } from "@/components/ui";
+import { bizFetch } from "@/lib/client-fetch";
 
 interface StaffMember {
   id: string;
@@ -32,8 +33,8 @@ export default function ProviderStaffPage() {
 
   async function loadData() {
     const [staffRes, servicesRes] = await Promise.all([
-      fetch("/api/provider/staff"),
-      fetch("/api/services"),
+      bizFetch("/api/provider/staff"),
+      bizFetch("/api/services"),
     ]);
     const staffData = await staffRes.json();
     const servicesData = await servicesRes.json();
@@ -46,7 +47,7 @@ export default function ProviderStaffPage() {
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    await fetch("/api/provider/staff", {
+    await bizFetch("/api/provider/staff", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name: newName }),
@@ -63,7 +64,7 @@ export default function ProviderStaffPage() {
   }
 
   async function saveSkills(staffId: string) {
-    await fetch(`/api/provider/staff/${staffId}/services`, {
+    await bizFetch(`/api/provider/staff/${staffId}/services`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ serviceIds: selectedServiceIds }),
@@ -74,7 +75,7 @@ export default function ProviderStaffPage() {
   }
 
   async function toggleActive(s: StaffMember) {
-    await fetch(`/api/provider/staff/${s.id}`, {
+    await bizFetch(`/api/provider/staff/${s.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isActive: !s.isActive }),

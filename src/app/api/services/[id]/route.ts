@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { resolveTenant, tenantRequired } from "@/lib/tenant";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const service = await prisma.service.findUnique({
-    where: { id: params.id },
+  const tenant = await resolveTenant(request);
+  if (!tenant) return tenantRequired();
+
+  const service = await prisma.service.findFirst({
+    where: { id: params.id, businessId: tenant.businessId },
     include: {
       staffServices: {
         include: { staff: { select: { id: true, name: true, isActive: true } } },

@@ -1,22 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { AppointmentStatus } from "@prisma/client";
+import { AppointmentStatus, Prisma } from "@prisma/client";
+import { resolveTenant, tenantRequired } from "@/lib/tenant";
+import { dayBoundariesUtc } from "@/lib/timezone";
 
 export async function GET(request: NextRequest) {
+  const tenant = await resolveTenant(request);
+  if (!tenant) return tenantRequired();
+
   const sp = request.nextUrl.searchParams;
   const date = sp.get("date");
   const staffId = sp.get("staffId");
   const status = sp.get("status") as AppointmentStatus | null;
 
-  const where: any = {};
+  const where: Prisma.AppointmentWhereInput = { businessId: tenant.businessId };
 
   if (date) {
-    // Filter appointments that overlap with the given date (in business timezone)
-    const dayStart = new Date(date + "T00:00:00Z");
-    const dayEnd = new Date(date + "T23:59:59Z");
-    // Approximate — for proper tz handling we'd convert, but this is close enough for filtering
-    where.startAt = { gte: new Date(dayStart.getTime() - 12 * 60 * 60 * 1000) };
-    where.endAt = { lte: new Date(dayEnd.getTime() + 12 * 60 * 60 * 1000) };
+    const { start, end } = dayBoundariesUtc(date, tenant.business.timezone);
+    // Half-open interval overlap: appointment overlaps the day if its window
+    // starts before the day ends AND ends after the day starts.
+    // The original code used ±12h padding which under-counted and over-counted
+    // at DST boundaries; dayBoundariesUtc gives exact local-midnight boundaries.
+    where.startAt = { lt: end };
+    where.endAt = { gt: start };
   }
 
   if (staffId) where.staffId = staffId;

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Scissors } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { TenantGuard } from "@/components/tenant-guard";
 
 export default function BookingLayout({
   children,
@@ -32,7 +33,7 @@ export default function BookingLayout({
       </header>
 
       <main className="relative max-w-5xl mx-auto px-4 sm:px-6 py-8">
-        {children}
+        <TenantGuard>{children}</TenantGuard>
       </main>
     </div>
   );

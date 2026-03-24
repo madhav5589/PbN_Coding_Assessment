@@ -9,6 +9,7 @@ import {
 import {
   Button, Card, GlassPanel, Input, Badge, EmptyState, FadeIn, Skeleton
 } from "@/components/ui";
+import { bizFetch } from "@/lib/client-fetch";
 
 interface Service {
   id: string;
@@ -71,7 +72,7 @@ export default function BookServicePage() {
   const [calYear, setCalYear] = useState(today.getFullYear());
 
   useEffect(() => {
-    fetch(`/api/services/${serviceId}`)
+    bizFetch(`/api/services/${serviceId}`)
       .then((r) => r.json())
       .then((d) => setService(d.service));
   }, [serviceId]);
@@ -80,7 +81,7 @@ export default function BookServicePage() {
     setSlotsLoading(true);
     setSlots([]);
     setSelectedSlot(null);
-    const res = await fetch(`/api/availability?serviceId=${serviceId}&date=${date}`);
+    const res = await bizFetch(`/api/availability?serviceId=${serviceId}&date=${date}`);
     const data = await res.json();
     setSlots(data.slots || []);
     setSlotsLoading(false);
@@ -103,7 +104,7 @@ export default function BookServicePage() {
     setError("");
     setSubmitting(true);
     try {
-      const res = await fetch("/api/book", {
+      const res = await bizFetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

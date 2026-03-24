@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Clock, ArrowRight } from "lucide-react";
 import { Card, PageHeader, SkeletonCard, EmptyState, Badge, FadeIn, StaggerContainer, StaggerItem } from "@/components/ui";
+import { bizFetch } from "@/lib/client-fetch";
 
 interface Service {
   id: string;
@@ -19,10 +20,10 @@ export default function BookingPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/services")
+    bizFetch("/api/services")
       .then((r) => r.json())
       .then((d) => {
-        setServices(d.services);
+        setServices(d.services ?? []);
         setLoading(false);
       });
   }, []);

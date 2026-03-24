@@ -6,6 +6,7 @@ import {
   Button, Card, Input, Checkbox, Modal, Table, Badge, PageHeader,
   SkeletonTable, EmptyState, FadeIn, useToast
 } from "@/components/ui";
+import { bizFetch } from "@/lib/client-fetch";
 
 interface Service {
   id: string;
@@ -34,7 +35,7 @@ export default function ProviderServicesPage() {
   const { toast } = useToast();
 
   async function loadServices() {
-    const res = await fetch("/api/provider/services");
+    const res = await bizFetch("/api/provider/services");
     const data = await res.json();
     setServices(data.services);
     setLoading(false);
@@ -51,14 +52,14 @@ export default function ProviderServicesPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (editingId) {
-      await fetch(`/api/provider/services/${editingId}`, {
+      await bizFetch(`/api/provider/services/${editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
       toast({ type: "success", title: "Service updated" });
     } else {
-      await fetch("/api/provider/services", {
+      await bizFetch("/api/provider/services", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -83,7 +84,7 @@ export default function ProviderServicesPage() {
   }
 
   async function toggleActive(s: Service) {
-    await fetch(`/api/provider/services/${s.id}`, {
+    await bizFetch(`/api/provider/services/${s.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isActive: !s.isActive }),

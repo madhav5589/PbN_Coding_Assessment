@@ -6,6 +6,8 @@ import {
   Button, Card, Input, Select, Modal, Badge, StatusPill, Avatar, PageHeader,
   Table, SkeletonTable, EmptyState, FadeIn, useToast
 } from "@/components/ui";
+import { bizFetch } from "@/lib/client-fetch";
+import { formatDateTZ, formatTimeTZ } from "@/lib/format-date";
 import { TextArea } from "@/components/ui/input";
 
 interface Appointment {
@@ -37,7 +39,7 @@ export default function ProviderAppointmentsPage() {
     const params = new URLSearchParams();
     if (dateFilter) params.set("date", dateFilter);
     if (statusFilter) params.set("status", statusFilter);
-    const res = await fetch(`/api/provider/appointments?${params.toString()}`);
+    const res = await bizFetch(`/api/provider/appointments?${params.toString()}`);
     const data = await res.json();
     setAppointments(data.appointments);
     setLoading(false);
@@ -49,7 +51,7 @@ export default function ProviderAppointmentsPage() {
 
   async function cancelAppointment(id: string) {
     if (!confirm("Cancel this appointment?")) return;
-    await fetch(`/api/provider/appointments/${id}/cancel`, {
+    await bizFetch(`/api/provider/appointments/${id}/cancel`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reason: "Cancelled by provider" }),
@@ -62,7 +64,7 @@ export default function ProviderAppointmentsPage() {
   async function reschedule(id: string) {
     if (!rescheduleDate) return;
     const [date, startTime] = rescheduleDate.split("T");
-    const res = await fetch(`/api/provider/appointments/${id}/reschedule`, {
+    const res = await bizFetch(`/api/provider/appointments/${id}/reschedule`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ date, startTime }),
@@ -79,7 +81,7 @@ export default function ProviderAppointmentsPage() {
   }
 
   async function saveNotes(id: string) {
-    await fetch(`/api/provider/appointments/${id}/notes`, {
+    await bizFetch(`/api/provider/appointments/${id}/notes`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ notes: editNotes }),
@@ -95,11 +97,11 @@ export default function ProviderAppointmentsPage() {
       header: "Time",
       render: (a) => (
         <div>
-          <div className="font-medium text-[var(--color-text-primary)]">{new Date(a.startAt).toLocaleDateString()}</div>
+          <div className="font-medium text-[var(--color-text-primary)]">{formatDateTZ(a.startAt)}</div>
           <div className="text-xs text-[var(--color-text-tertiary)]">
-            {new Date(a.startAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            {formatTimeTZ(a.startAt)}
             {" – "}
-            {new Date(a.endAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            {formatTimeTZ(a.endAt)}
           </div>
         </div>
       ),
@@ -233,12 +235,12 @@ export default function ProviderAppointmentsPage() {
               </div>
               <div>
                 <span className="text-[var(--color-text-tertiary)]">Date</span>
-                <p className="font-medium text-[var(--color-text-primary)]">{new Date(selectedAppt.startAt).toLocaleDateString()}</p>
+                <p className="font-medium text-[var(--color-text-primary)]">{formatDateTZ(selectedAppt.startAt)}</p>
               </div>
               <div>
                 <span className="text-[var(--color-text-tertiary)]">Time</span>
                 <p className="font-medium text-[var(--color-text-primary)]">
-                  {new Date(selectedAppt.startAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} – {new Date(selectedAppt.endAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  {formatTimeTZ(selectedAppt.startAt)} – {formatTimeTZ(selectedAppt.endAt)}
                 </p>
               </div>
               <div>

@@ -9,6 +9,8 @@ import {
 import {
   Card, PageHeader, StatusPill, FadeIn, StaggerContainer, StaggerItem,
 } from "@/components/ui";
+import { bizFetch } from "@/lib/client-fetch";
+import { formatDateTZ, formatTimeTZ } from "@/lib/format-date";
 
 interface Analytics {
   topServices: { serviceId: string; serviceName: string; count: number }[];
@@ -66,7 +68,7 @@ export default function ProviderDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/provider/analytics")
+    bizFetch("/api/provider/analytics")
       .then((r) => r.json())
       .then((d) => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
@@ -273,7 +275,7 @@ export default function ProviderDashboard() {
                     <td className="px-6 py-2.5 font-medium text-[var(--color-text-primary)]">{rb.service.name}</td>
                     <td className="px-3 py-2.5 text-[var(--color-text-secondary)]">{rb.staff.name}</td>
                     <td className="px-3 py-2.5 text-[var(--color-text-secondary)] tabular-nums">
-                      {new Date(rb.startAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                      {formatDateTZ(rb.startAt)} {formatTimeTZ(rb.startAt)}
                     </td>
                     <td className="px-3 py-2.5"><StatusPill status={rb.status} /></td>
                   </tr>
